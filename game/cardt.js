@@ -1,7 +1,8 @@
-function CardT(name, desc, count, func) {
+function CardType(name, count, desc, val, func) {
 	this.name = name;
-	this.desc = desc;
 	this.count = count;
+	this.desc = desc;
+	this.val = val;
 	this.func = func;
 }
 
@@ -14,37 +15,32 @@ function CardT(name, desc, count, func) {
 //7 - Priority
 //8 - Death
 
-const info = require('fs').readFileSync(__dirname + '/cardnames.tsv').toString().split('\n');
+const plays = [
+	(me, you, card) => you.hand[0].val == card.val && you.die(),
+	(me, you) => me.whisper(`${you} holds a ${card} card`),
+	(me, you) => {
+		if(me.hand[0].val < you.hand[0].val)
+			me.die();
+		else if(me.hand[0].val > you.hand[0])
+			you.die();
+		else announce('The cards are equal! Nobody\'s out!');
+	},
+	me => me.safe = true,
+	(me, you) => you.discard(),
+	(me, you) => {
+		[me.hand, you.hand] = [you.hand, me.hand];
+		[you, me].forEach(p => p.whisper(`You now hold a ${p.hand} card`));
+	},
+	me => {},
+	me => me.die()
+];
 
-module.exports = function CardT(announce) {
-	let names;
-	const cards = [
-		new CardT('Guess', 5, (me, you, card) =>
-			you.hand[0].val == card.val && you.die()),
-		new CardT('Peek', 2, (me, you) =>
-			me.whisper(`${you} holds a ${card} card`)),
-		new CardT('Compare', 2, (me, you) => {
-			if(me.hand[0].val < you.hand[0].val)
-				me.die();
-			else if(me.hand[0].val > you.hand[0]
-				you.die();
-			else announce('The cards are equal! Nobody\'s out!');
-		}),
-		new CardT('Protect', 2, me =>
-			me.safe = true),
-		new CardT('Drop', 2, (me, you) =>
-			you.discard()),
-		new CardT('Swap', 1, (me, you) => {
-			[me.hand, you.hand] = [you.hand, me.hand];
-			[you, me].forEach(p => p.whisper(`You now hold a ${p.hand} card`));
-		}),
-		new CardT('Priority', 1, me => {}),
-		new CardT('Bomb', 1, me => {})
-	];
+//pass "cardnames.tsv" as arg2
+module.exports = function(announce, datapath) {
+	const info = require('fs').readFileSync(__dirname + '/' + datapath).toString().split('\n');
 	
-	names = cards.map(card => card.name);
-	for(let i=0; i<cards.length; i++) {
-		cards[i].val = i + 1;
-	}
-	return cards;
+	for(let i=0; i<plays.length; i++)
+		cardtypes.push(new Card(...info[i].split('\t'), i + 1, plays[i]));
+	
+	return cardtypes;
 }

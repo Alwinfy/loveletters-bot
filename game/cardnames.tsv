@@ -1,8 +1,8 @@
-5 
-2
-2
-2
-2
-1
-1
-1
+5	Guess	Guess another player's card (may not guess Guess): if correct they're out.
+2	Peek	Peek at another player's card.
+2	Compare	Compare with another player's card: the lesser card's holder is out. If equal, nobody's out.
+2	Protect	May not be targeted by any cards until the next turn.
+2	Drop	Force another player to drop and redraw their card.
+1	Swap	Switch cards with another player.
+1	Usurp	Must be played if the other card in the hand is Drop or Swap; no other effect.
+1	Bomb	If this card is played or discarded, its holder is out.
