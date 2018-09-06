@@ -1,0 +1,25 @@
+{
+  "name": "buzzbot",
+  "version": "1.0.0",
+  "description": "A BuzzCount bot",
+  "main": "index.js",
+  "dependencies": {
+    "bufferutil": "^3.0.4",
+    "discord.js": "^11.3.2",
+    "grapheme-splitter": "^1.0.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "start": "node main.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Alwinfy/buzzbot.git"
+  },
+  "author": "Alwinfy",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Alwinfy/buzzbot/issues"
+  },
+  "homepage": "https://github.com/Alwinfy/buzzbot#readme"
+}

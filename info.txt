@@ -1,0 +1,9 @@
+**BuzzCount** is a game described as "the equivalent of a mathematical spelling bee," in which competitors attempt to determine whether a number has certain properties as quickly as possible.
+
+A Moderator (in this case, BuzzBot) selects a starting number N, and players arrange themselves in a circle. The first player says N, the second N+1, the third N+2, and so on. Any player who does not announce the correct number is eliminated. Additionally, players can be eliminated by the Moderator for taking too long to determine their answer (currently unimplemented in BuzzBot). The Moderator traditionally enforces this rule by whistling the Final Jeopardy theme music (also unimplemented).
+
+Of course, so far this is far too easy on the players. That's where **BuzzWords** come in. The BuzzWords are a list of terms, each associated with a characteristic possessed by some (but not all) integers. For example, the word "buzz" applies to numbers that are divisible by seven or contain seven as a digit. The Moderator enables (or in BuzzBot's case, you enable) various BuzzWords throughout the game, and, if any of the BuzzWords apply to a certain number, the student must say the appropriate words rather than the number itself. So, if the number is 70 and the only active word is "buzz," a student must say "buzz" and would be eliminated for saying "70."
+
+Eventually, over a half-dozen BuzzWords are activated, and most competitors are quickly eliminated after this point (notably, Sump fells competitors like a knife through hot butter). The highest number ever reached in a live game is 299.
+
+This bot simulates games, sans elimination (use your self-control) and can be used to practice individual numbers. Use `PREFIXhelp` for a list of commands. To enter answers, precede your list of BuzzWords with a `REPLYPFX`.
