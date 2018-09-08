@@ -1,28 +1,23 @@
-let tickets = {}, tid = 0;
 
-function Ticket(field, value, callback) {
+function Ticket(validate, callback) {
 	this.call = callback;
-	this.value = value;
-	this.field = field;
-	tickets[tid] = this;
-	return tid++;
+	this.validate = validate;
+	Ticket.tickets[tid] = this;
+	return Ticket.tid++;
 }
+Ticket.tickets = {};
+Ticket.tid = 0;
 
-Ticket.prototype.check = function(msg) {
-	return msg[this.field].id == this.value;
-}
-
-function checkAll(msg) {
-	for(let i in tickets)
-		if(tickets[i].check(msg)) {
-			tickets[i].call(msg);
-			delete tickets[i];
+Ticket.checkall = function(msg) {
+	for(let i in Ticket.tickets)
+		if(Ticket.tickets[i].validate(msg)) {
+			Ticket.tickets[i].call(msg);
+			delete Ticket.tickets[i];
 			break;
 		}
-}
-function cancel(tid) {
-	delete tickets[tid];
-}
+};
+Ticket.cancel = function(tid) {
+	delete Ticket.tickets[tid];
+};
 
 module.exports.Ticket = Ticket;
-module.exports.checkAll = checkAll;

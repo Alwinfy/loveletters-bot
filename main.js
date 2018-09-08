@@ -17,7 +17,7 @@ const util = require('./util');
 const commands = require('./commands') || {};
 const Server = require('./server');
 const dummy = Server.dummy();
-const {checkAll} = require('./ticket');
+const Ticket = require('./ticket');
 let servers = {}, dms = {};
 
 
@@ -42,8 +42,10 @@ client.on('message', function(msg) {
 	if(!serv) return;
 	let prefix = serv.get('prefix');
 	if(!msg.content.toLowerCase().startsWith(prefix)) {
-		if(msg.content.startsWith(serv.get('replypfx')))
-			checkAll(msg);
+		if(msg.content.startsWith(serv.get('replypfx'))) {
+			msg.content = msg.content.substr(serv.get('replypfx').length);
+			Ticket.checkall(msg);
+		}
 		return;
 	}
 	
