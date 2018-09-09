@@ -28,6 +28,7 @@ module.exports = function(whisperer) {
 		this.hand = [];
 		this.whisper = whisperer(handle);
 		this.game = game;
+		this.draw();
 	}
 	Player.prototype.die = function(reason) {
 		this.game.cplay--;
@@ -44,7 +45,6 @@ module.exports = function(whisperer) {
 	Player.prototype.draw = function() {
 		this.game.announce(`${this} draws a card.`);
 		this.hand.push(this.game.deck[this.game.deckpos++]);
-		this.hand.sort();
 		this.whisper(`Your current hand: ${this.hand.join(', ')}.`);
 	};
 	Player.prototype.toString = function() {

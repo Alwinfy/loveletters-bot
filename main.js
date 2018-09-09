@@ -14,7 +14,7 @@ catch(e) {
 }
 
 const util = require('./util');
-const commands = require('./commands') || {};
+const commands = require('./commands')(client) || {};
 const Server = require('./server');
 const dummy = Server.dummy();
 const Ticket = require('./ticket');

@@ -3,7 +3,7 @@ module.exports = function(client) {
 	const Session = require('./session');
 	const Ticket = require('./ticket');
 	const gameui = require('./interface')(client, Ticket);
-	const game = require('./game/game')(gameui);
+	const LoveLetters = require('./game/game')(gameui);
 	const {readFileSync} = require('fs');
 	const splitter = new (require('grapheme-splitter'))();
 	const commands = {};
@@ -25,6 +25,7 @@ module.exports = function(client) {
 	
 	const info = readFileSync('./info.txt').toString();
 	const hearts = splitter.splitGraphemes('\u2764\uFE0F\uD83D\uDC96\uD83D\uDC97\u2661\uD83D\uDC95\uD83D\uDC93\u2665');
+	const valentines = readFileSync('./loves.txt').toString().trim().split('\n');
 	
 	new Command(function(msg, serv) {
 		let reply = '**LoveLettersBot** - a bot for playing Love Letters, forked from BuzzBot\n\n**__Commands:__**',
@@ -45,7 +46,7 @@ module.exports = function(client) {
 
 	new Command(function(msg, serv, args) {
 		if(!games[msg.channel.id]) {
-			msg.channel.send(`Initialize first with ${serv.get('prefix')} init!`);
+			msg.channel.send(`Initialize first with ${serv.get('prefix')}init!`);
 			return;
 		}
 		games[msg.channel.id].start();
@@ -53,7 +54,7 @@ module.exports = function(client) {
 
 	new Command(function(msg) {
 		if(!games[msg.channel.id]) {
-			msg.channel.send(`Initialize first with ${serv.get('prefix')} init!`);
+			msg.channel.send(`Initialize first with ${serv.get('prefix')}init!`);
 			return;
 		}
 		games[msg.channel.id].stop();
@@ -64,18 +65,36 @@ module.exports = function(client) {
 
 	new Command(function(msg, serv, args) {
 		if(!games[msg.channel.id]) {
-			msg.channel.send(`Initialize first with ${serv.get('prefix')} init!`);
+			msg.channel.send(`Initialize first with ${serv.get('prefix')}init!`);
 			return;
 		}
 		games[msg.channel.id].register(msg.author.tag, msg.member.toString());
-	}, 'in', 'joins the current game');
+	}, 'join', 'joins the current game');
 	new Command(function(msg, serv, args) {
 		if(!games[msg.channel.id]) {
-			msg.channel.send(`Initialize first with ${serv.get('prefix')} init!`);
+			msg.channel.send(`Initialize first with ${serv.get('prefix')}init!`);
 			return;
 		}
 		games[msg.channel.id].deregister(msg.author.tag);
-	}, 'out', 'leaves the current game');
+	}, 'leave', 'leaves the current game');
+	new Command(function(msg, serv) {
+		if(games[msg.channel.id]) {
+			msg.channel.send(`Already initialized today!`);
+			return;
+		}
+		games[msg.channel.id] = new LoveLetters(msg.channel);
+	}, 'init', 'prepares the game for playing in this channel');
+	new Command(function(msg, serv) {
+		const game = games[msg.channel.id];
+		if(!game) {
+			msg.channel.send('Not initialized!');
+			return;
+		}
+		let text = `**Number of players:** ${Object.keys(game.lobby).length}\n**Started:** ${game.started ? 'yes' : 'no'}`;
+		if(game.started)
+			text += `**Alive players:** ${game.players.length}\n**Current player:** ${game.players[game.turn]}\n**Deck position:** ${game.deckpos}/${game.deck.length-1}`;
+		msg.channel.send(text);
+	}, 'stats', 'gives the status of the current game');
 	new Command(function(msg, serv, args) {
 		serv.set('welcome', args.join(' '));
 	}, 'setmsg', 'sets the server\'s welcome message', false);

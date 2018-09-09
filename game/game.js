@@ -12,7 +12,8 @@ module.exports = function(io) {
 		this.deck = [];
 		this.started = false;
 		this.turn = 0;
-		this.deckpos = 1; // customary burn
+		this.deckpos = 0;
+		this.announce('Game initialized!');
 	}
 
 	LoveLetters.prototype.register = function(handle, name) {
@@ -22,7 +23,7 @@ module.exports = function(io) {
 			this.announce('The game has started! You can\'t join!');
 		else {
 			this.lobby[handle] = name;
-			this.announce(`Welcome, ${name}! The lobby has ${this.players.size} players now.`);
+			this.announce(`Welcome, ${name}! The lobby has ${Object.keys(this.lobby).length} players now.`);
 		}
 	};
 	LoveLetters.prototype.deregister = function(handle) {
@@ -31,26 +32,31 @@ module.exports = function(io) {
 		else if(this.started)
 			this.announce('The game is afoot! You can\'t leave now!');
 		else {
-			this.announce(`Goodbye, ${this.lobby[handle]}! The lobby has ${this.players.size - 1} players now.`);
+			this.announce(`Goodbye, ${this.lobby[handle]}! The lobby has ${Object.keys(this.lobby).length - 1} players now.`);
 			delete this.lobby[handle];
 		}
-	};
-		
+	}
+	
 	LoveLetters.prototype.start = function() {
+		if(Object.keys(this.lobby).length < 1) {
+			this.announce('LoveLetters needs at least two players!');
+			return;
+		}
 		if(this.started) {
 			this.announce('Game has already started!');
 			return;
 		}
+		this.announce(`Starting game with ${Object.keys(this.lobby).length} players!`);
 		this.started = true;
-		for(const handle in this.lobby)
-			this.players.push(new Player(handle, this.lobby[handle], this));
-		for(let i=0; i<types.length; i++)
-			for(let j=0; j<types[i].count; i++)
-				this.deck.push(new Card(types[i]));
+		for(let i=0; i<cardtypes.length; i++)
+			for(let j=0; j<cardtypes[i].count; j++)
+				this.deck.push(new Card(cardtypes[i]));
 		for(let i=this.deck.length-1; i>0; i--) {
 			const j = Math.floor(Math.random() * (i + 1));
 			[this.deck[i], this.deck[j]] = [this.deck[j], this.deck[i]];
 		} // shuffle
+		for(const handle in this.lobby)
+			this.players.push(new Player(handle, this.lobby[handle], this));
 		this.tick();
 	}
 	LoveLetters.prototype.stop = function() {
@@ -58,13 +64,13 @@ module.exports = function(io) {
 			this.announce('No game is running!');
 			return;
 		}
-		const bigcard = this.players.reduce(function(l, r) {
-			return Math.max(l.hand[0].val, r.hand[0].val);	
-		}, 0);
+		const bigcard = this.players.map(function(p) {
+			return p.hand[0].val;
+		}).reduce(Math.max);
 		const winners = this.players.filter(function(p) {
 			return p.hand[0].val >= bigcard;
 		});
-		this.announce(`The winner${winners.length === 1 ? ' is' : 's are'} ${winners.join(' and ')}`);
+		this.announce(`The game has ended! The winner${winners.length === 1 ? ' is' : 's are'} ${winners.join(', ')}.`);
 		this.players = [];
 		this.deck = [];
 		this.started = false;
@@ -111,12 +117,19 @@ module.exports = function(io) {
 	LoveLetters.prototype.play = function(card, me, you, guess) {
 		card.func(me, you, guess);
 		this.turn = (this.turn + 1) % this.players.length;
-		if(this.players.length === 1 || this.deckpos >= this.deck.length - 1) // minus one for burncard
-			this.stop();
-		else
-			this.tick(); // for TCO
+		this.tick();
 	}
 	LoveLetters.prototype.tick = function() {
+		if(this.players.length <= 1) {
+			this.announce('Only one player remains!');
+			this.stop();
+			return;
+		}
+		if(this.deckpos >= this.deck.length - 1) { // minus one for burncard
+			this.announce('The deck is empty!');
+			this.stop();
+			return;
+		}
 		const player = this.players[this.turn];
 		this.announce(`It is now ${player}'s turn.`);
 		player.safe = false;
