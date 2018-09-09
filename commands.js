@@ -101,7 +101,7 @@ module.exports = function(client) {
 		}
 		let text = `**Number of players:** ${Object.keys(game.lobby).length}\n**Started:** ${game.started ? 'yes' : 'no'}`;
 		if(game.started)
-			text += `**Alive players:** ${game.players.length}\n**Current player:** ${game.players[game.turn]}\n**Deck position:** ${game.deckpos}/${game.deck.length-1}`;
+			text += `\n**Alive players:** ${game.players.length}\n**Current player:** ${game.players[game.turn]}\n**Deck position:** ${game.deckpos}/${game.deck.length-1}`;
 		msg.channel.send(text);
 	}, 'stats', 'gives the status of the current game');
 	new Command(function(msg, serv, args) {

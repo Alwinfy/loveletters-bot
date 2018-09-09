@@ -81,14 +81,23 @@ module.exports = function(io) {
 			this.announce('No game is running!');
 			return;
 		}
-		const bigcard = this.players.map(function(p) {
-			return p.hand[0].val;
-		}).reduce(function(a, b) {return (a > b) ? a : b});
-		const winners = this.players.filter(function(p) {
-			return p.hand[0].val >= bigcard;
-		});
+		let winners, announce = 'The game has ended!\n';
+		if(this.players.length < 2) {
+			announce += `${this.players[0]} was the last one standing!\n`;
+			winners = this.players;
+		}
+		else {
+			announce += 'The remaining players compare:\n';
+			const bigcard = this.players.map(function(p) {
+				announce += `${p} had a ${p.hand[0]}.\n`;
+				return p.hand[0].val;
+			}).reduce(function(a, b) {return (a > b) ? a : b});
+			winners = this.players.filter(function(p) {
+				return p.hand[0].val >= bigcard;
+			});
+		}
 		console.log(bigcard, winners);
-		this.announce(`The game has ended! The winner${winners.length === 1 ? ' is' : 's are'} ${winners.join(', ')}.`);
+		this.announce(`${announce}The winner${winners.length === 1 ? ' is' : 's are'} ${winners.join(' and ')}.`);
 		this.players = [];
 		this.deck = [];
 		this.deckpos = 0;
@@ -138,13 +147,13 @@ module.exports = function(io) {
 		this.tick();
 	}
 	LoveLetters.prototype.tick = function() {
-		if(this.players.length <= 1) {
-			this.announce('Only one player remains!');
+		if(this.deckpos >= this.deck.length - 1) { // minus one for burncard
+			this.announce('The deck is empty!');
 			this.stop();
 			return;
 		}
-		if(this.deckpos >= this.deck.length - 1) { // minus one for burncard
-			this.announce('The deck is empty!');
+		if(this.players.length <= 1) {
+			this.announce('Only one player remains!');
 			this.stop();
 			return;
 		}
