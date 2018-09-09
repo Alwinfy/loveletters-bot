@@ -78,11 +78,10 @@ module.exports = function(io) {
 		this.started = false;
 	};
 	LoveLetters.prototype.checkplayer = function(word, cb) {
-		const matches = [];
-		for(let i=0; i<this.players.length; i++)
-			if(word.toLowerCase().includes(this.players[i].name.toLowerCase())
-				|| word.toLowerCase().includes(this.players[i].handle.toLowerCase()))
-				matches.push(i);
+		const matches = this.players.filter(function(p) {
+			return word.toLowerCase().includes(this.players[i].name.toLowerCase())
+				|| word.toLowerCase().includes(this.players[i].handle.toLowerCase());
+		});
 		
 		if(matches.length > 1)
 			this.announce('Ambiguous player!');
@@ -118,6 +117,7 @@ module.exports = function(io) {
 		}.bind(this));
 	};
 	LoveLetters.prototype.play = function(card, me, you, guess) {
+		console.log(me, you, guess);
 		card.func(me, you, guess);
 		this.turn = (this.turn + 1) % this.players.length;
 		this.tick();
@@ -145,7 +145,7 @@ module.exports = function(io) {
 			}
 			const [card] = player.hand.splice(index, 1);
 			if(card.func.length > 1)
-			setTimeout(function() {return this.getplayer('Who would you like to target?', function(other) {
+			setTimeout(function() {return this.getplayer('Who would you like to target?', player.handle, function(other) {
 				if(other.safe) {
 					this.announce('That person\'s Protected!');
 					return false;

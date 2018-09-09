@@ -26,7 +26,7 @@ const plays = [
 	},
 	(me, you) => {
 		me.game.announce(`${me} peeks at ${you}'s card.`);
-		me.whisper(`${you} holds a ${card} card.`);
+		me.whisper(`${you} holds a ${you.hand[0]} card.`);
 	},
 	(me, you) => {
 		me.game.announce(`${me} and ${you} compare cards!`);
