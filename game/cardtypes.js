@@ -36,7 +36,7 @@ const plays = [
 		me.game.announce(`${me} and ${you} compare cards!`);
 		if(me.hand[0].val < you.hand[0].val)
 			me.die('three');
-		else if(me.hand[0].val > you.hand[0])
+		else if(me.hand[0].val > you.hand[0].val)
 			you.die('three');
 		else me.game.announce('The cards are equal! Nobody\'s out!');
 	},
