@@ -23,7 +23,8 @@ module.exports = function(io) {
 			this.announce('The game has started! You can\'t join!');
 		else {
 			this.lobby[handle] = name;
-			this.announce(`Welcome, ${name}! The lobby has ${Object.keys(this.lobby).length} players now.`);
+			const players = Object.keys(this.lobby).length;
+			this.announce(`Welcome, ${name}! The lobby has ${players} player${players == 1 ? '' : 's'} now.`);
 		}
 	};
 	LoveLetters.prototype.deregister = function(handle) {
@@ -32,7 +33,8 @@ module.exports = function(io) {
 		else if(this.started)
 			this.announce('The game is afoot! You can\'t leave now!');
 		else {
-			this.announce(`Goodbye, ${this.lobby[handle]}! The lobby has ${Object.keys(this.lobby).length - 1} players now.`);
+			const players = Object.keys(this.lobby).length - 1;
+			this.announce(`Goodbye, ${this.lobby[handle]}! The lobby has ${players} player${players == 1 ? '' : 's'} now.`);
 			delete this.lobby[handle];
 		}
 	}
@@ -75,7 +77,7 @@ module.exports = function(io) {
 		this.deck = [];
 		this.started = false;
 	};
-	LoveLetters.prototype.checkcard = function(word, cb) {
+	LoveLetters.prototype.checkplayer = function(word, cb) {
 		const matches = [];
 		for(let i=0; i<this.players.length; i++)
 			if(word.toLowerCase().includes(this.players[i].name.toLowerCase())
@@ -83,16 +85,17 @@ module.exports = function(io) {
 				matches.push(i);
 		
 		if(matches.length > 1)
-			this.game.announce('Ambiguous player!');
+			this.announce('Ambiguous player!');
 		else if(!matches.length)
-			this.game.announce('Not a valid player!');
+			this.announce('Not a valid player!');
 		else return cb(matches[0]);
 		return false;
 	};
 	LoveLetters.prototype.getplayer = function(query, handle, cb) {
 		this.ask(handle, query, function(resp) {
-			this.checkplayer(resp, cb);
-		});
+			console.log('cack');
+			return this.checkplayer(resp, cb);
+		}.bind(this));
 	};
 	LoveLetters.prototype.checkcard = function(word, deck, cb) {
 		const value = parseInt(word);
@@ -102,17 +105,17 @@ module.exports = function(io) {
 				|| value === deck[i].val)
 				matches.push(i);
 		
-		if(matches.length > 1)
-			this.game.announce('Ambiguous card!');
+		if(matches.length > 1 && matches[0].val !== matches[1].val)
+			this.announce('Ambiguous card!');
 		else if(!matches.length)
-			this.game.announce('Not a valid card!');
+			this.announce('Not a valid card!');
 		else return cb(matches[0]);
 		return false;
 	};
 	LoveLetters.prototype.getcard = function(query, handle, deck, cb) {
 		this.ask(handle, query, function(resp) {
-			this.checkcard(resp, deck, cb);
-		});
+			return this.checkcard(resp, deck, cb);
+		}.bind(this));
 	};
 	LoveLetters.prototype.play = function(card, me, you, guess) {
 		card.func(me, you, guess);
@@ -134,34 +137,34 @@ module.exports = function(io) {
 		this.announce(`It is now ${player}'s turn.`);
 		player.safe = false;
 		player.draw();
-		this.getcard(`What card would you like to play, ${player}?`, player.handle, player.hand, function(index) {
+		setTimeout(function() {return this.getcard(`What card would you like to play, ${player}?`, player.handle, player.hand, function(index) {
 			if((player.hand[index].val === 5 || player.hand[index].val === 6)
-				&& player.hand[!index].val === 7) {
+				&& player.hand[1 - index].val === 7) {
 				player.whisper('You must play the Seven card!');
 				return false;
 			}
-			const card = player.hand.splice(index, 1);
+			const [card] = player.hand.splice(index, 1);
 			if(card.func.length > 1)
-			return this.getplayer('Who would you like to target?', function(other) {
+			setTimeout(function() {return this.getplayer('Who would you like to target?', function(other) {
 				if(other.safe) {
 					this.announce('That person\'s Protected!');
 					return false;
 				}
 				if(card.func.length > 2)
-				return this.getcard('What card would you like to guess?', player.handle, cardtypes, function(index) {
+				setTimeout(function() {return this.getcard('What card would you like to guess?', player.handle, cardtypes, function(index) {
 					if(cardtypes[index].val === 1) {
 						this.announce('You can\'t guess a Guess!');
 						return false;
 					}
 					this.play(card, player, other, cardtypes[index]);
 					return true;
-				});
-				this.play(card, player, other);
+					}.bind(this));}.bind(this), 0);
+				else this.play(card, player, other);
 				return true;
-			});
-			this.play(card, player);
+			}.bind(this));}.bind(this), 0);
+			else this.play(card, player);
 			return true;
-		});
+		}.bind(this));}.bind(this), 0);
 	};
 	return LoveLetters;
 };

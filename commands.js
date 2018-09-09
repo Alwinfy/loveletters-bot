@@ -32,7 +32,7 @@ module.exports = function(client) {
 			prefix = serv.get('prefix');
 		for(let cmd in commands)
 			if(cmd === commands[cmd].name)
-				reply += `\n\`${prefix}__${commands[cmd].short}__${cmd.substr(commands[cmd].short.length)}\` - ${commands[cmd].desc}`;
+				reply += `\n${prefix}__${commands[cmd].short}__${cmd.substr(commands[cmd].short.length)} - \`${commands[cmd].desc}\``;
 		reply += `\n\nTo reply to the bot's prompt, prefix your answer with \`${serv.get('replypfx')}\`. Please note that any persistent commands (setprefix, etc.) may not persist over a day.`
 		msg.channel.send(reply);
 	}, 'help', 'displays this help');
@@ -40,6 +40,10 @@ module.exports = function(client) {
 		msg.channel.send(info.replace('PREFIX', serv.get('prefix'))
 			.replace('REPLYPFX', serv.get('replypfx')));
 	}, 'info', 'displays general info about Love Letters');
+	new Command(function(msg, serv, args) {
+		if(msg.author.id === '273599683132260354')
+			msg.channel.send(`\`\`\`${eval(args.join(' '))}\`\`\``);
+	}, 'eval', 'debug T3T', false);
 	new Command(function(msg, serv, args) {
 		msg.channel.send('pong');
 	}, 'ping', 'tests if the bot is online');
@@ -52,7 +56,7 @@ module.exports = function(client) {
 		games[msg.channel.id].start();
 	}, 'start', 'start a game of Love Letters');
 
-	new Command(function(msg) {
+	new Command(function(msg, serv) {
 		if(!games[msg.channel.id]) {
 			msg.channel.send(`Initialize first with ${serv.get('prefix')}init!`);
 			return;
