@@ -31,7 +31,7 @@ module.exports = function(whisperer) {
 		this.draw();
 	}
 	Player.prototype.die = function(reason) {
-		this.game.turn--;
+		//this.game.turn--;
 		this.game.players.splice(this.game.players.indexOf(this), 1);
 		this.game.announce(`${this}${deaths[reason][Math.floor(Math.random() * deaths[reason].length)]} Their hand contained ${this.hand.length ? 'a ' + this.hand[0] : 'nothing'} when they got out. ${this.game.players.length} player${this.game.players.length !== 1 ? 's remain' : ' remains'}!`);
 	};
