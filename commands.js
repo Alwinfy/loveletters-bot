@@ -83,10 +83,15 @@ module.exports = function(client) {
 	}, 'leave', 'leaves the current game');
 	new Command(function(msg, serv) {
 		if(games[msg.channel.id]) {
-			msg.channel.send(`Already initialized today!`);
+			msg.channel.send(`Already initialized!`);
 			return;
 		}
-		games[msg.channel.id] = new LoveLetters(msg.channel);
+		games[msg.channel.id] = new LoveLetters(msg.channel, function() {
+			for(let i in Ticket.tickets)
+				if(Ticket.tickets[i].validate(msg))
+					delete Ticket.tickets[i]; // clean up loose ends
+			delete games[msg.channel.id];
+		});
 	}, 'init', 'prepares the game for playing in this channel');
 	new Command(function(msg, serv) {
 		const game = games[msg.channel.id];

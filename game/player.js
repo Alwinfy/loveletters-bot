@@ -33,7 +33,7 @@ module.exports = function(whisperer) {
 	Player.prototype.die = function(reason) {
 		this.game.cplay--;
 		this.game.players.splice(this.game.players.indexOf(this));
-		this.game.announce(`${this}${deaths[reason][deaths[reason].length]} Their hand contained ${this.hand.length ? 'a ' + this.hand[0] : 'nothing'} when they got out. ${this.game.players.length} remain!`);
+		this.game.announce(`${this}${deaths[reason][Math.floor(Math.random() * deaths[reason].length)]} Their hand contained ${this.hand.length ? 'a ' + this.hand[0] : 'nothing'} when they got out. ${this.game.players.length} player${this.game.players.length == 1 ? 's remain' : ' remains'}!`);
 	};
 	Player.prototype.discard = function() {
 		this.game.announce(`${this} discards their card, revealing a ${this.hand[0]}!`);

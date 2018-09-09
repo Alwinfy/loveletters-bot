@@ -6,6 +6,10 @@ function CardType(count, name, desc, val, func) {
 	this.func = func;
 }
 
+CardType.prototype.toString = function() {
+	return `**${this.name}** (**${this.val}**)`;
+}
+
 //A - Guess
 //2 - Spy
 //3 - Compare

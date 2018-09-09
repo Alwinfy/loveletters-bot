@@ -8,8 +8,7 @@ module.exports = (client, Ticket) => ({
 	asker: channel => (handle, question, callback) => {
 		channel.send(question);
 		return (function ask() {
-			new Ticket(m => {console.log(m.author.tag + ' ' + handle); return m.author.tag == handle}, msg => {
-				console.log(msg.content);
+			new Ticket(m => m.author.tag == handle && m.channel.id == channel.id, msg => {
 				if(!callback(msg.content.trim()))
 					ask();
 			});

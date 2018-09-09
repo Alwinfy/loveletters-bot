@@ -4,7 +4,7 @@ module.exports = function(io) {
 		return c.name.toLowerCase();
 	}));
 	const Player = require('./player.js')(io.whisperer);
-	function LoveLetters(channel) {
+	function LoveLetters(channel, dest) {
 		this.announce = io.announcer(channel);
 		this.ask = io.asker(channel);
 		this.lobby = {};
@@ -14,8 +14,22 @@ module.exports = function(io) {
 		this.turn = 0;
 		this.deckpos = 0;
 		this.announce('Game initialized!');
+		this.dest = dest;
+		this.timer = null;
+		this.reset();
 	}
-
+	LoveLetters.prototype.reset = function() {
+		if(this.timer != null)
+			clearTimeout(this.timer);
+		this.timer = setTimeout(function() {
+			this.timer = null;
+			this.announce('Ending game and de-initializing due to inactivity!');
+			console.log('de-init');
+			this.stop();
+			this.dest();
+		}.bind(this), 15 * 60 * 1000);
+	};
+	
 	LoveLetters.prototype.register = function(handle, name) {
 		if(this.lobby[handle])
 			this.announce('You\'re already in this game!');
@@ -59,6 +73,7 @@ module.exports = function(io) {
 		} // shuffle
 		for(const handle in this.lobby)
 			this.players.push(new Player(handle, this.lobby[handle], this));
+		this.reset();
 		this.tick();
 	}
 	LoveLetters.prototype.stop = function() {
@@ -68,19 +83,21 @@ module.exports = function(io) {
 		}
 		const bigcard = this.players.map(function(p) {
 			return p.hand[0].val;
-		}).reduce(Math.max);
+		}).reduce(function(a, b) {return (a > b) ? a : b});
 		const winners = this.players.filter(function(p) {
 			return p.hand[0].val >= bigcard;
 		});
+		console.log(bigcard, winners);
 		this.announce(`The game has ended! The winner${winners.length === 1 ? ' is' : 's are'} ${winners.join(', ')}.`);
 		this.players = [];
 		this.deck = [];
+		this.deckpos = 0;
 		this.started = false;
 	};
 	LoveLetters.prototype.checkplayer = function(word, cb) {
 		const matches = this.players.filter(function(p) {
-			return word.toLowerCase().includes(this.players[i].name.toLowerCase())
-				|| word.toLowerCase().includes(this.players[i].handle.toLowerCase());
+			return word.toLowerCase().includes(p.name.toLowerCase())
+				|| word.toLowerCase().includes(p.handle.toLowerCase());
 		});
 		
 		if(matches.length > 1)
@@ -92,7 +109,6 @@ module.exports = function(io) {
 	};
 	LoveLetters.prototype.getplayer = function(query, handle, cb) {
 		this.ask(handle, query, function(resp) {
-			console.log('cack');
 			return this.checkplayer(resp, cb);
 		}.bind(this));
 	};
@@ -117,7 +133,6 @@ module.exports = function(io) {
 		}.bind(this));
 	};
 	LoveLetters.prototype.play = function(card, me, you, guess) {
-		console.log(me, you, guess);
 		card.func(me, you, guess);
 		this.turn = (this.turn + 1) % this.players.length;
 		this.tick();
@@ -133,6 +148,7 @@ module.exports = function(io) {
 			this.stop();
 			return;
 		}
+		this.reset();
 		const player = this.players[this.turn];
 		this.announce(`It is now ${player}'s turn.`);
 		player.safe = false;

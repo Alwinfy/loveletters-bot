@@ -9,11 +9,9 @@ Ticket.tickets = {};
 Ticket.tid = 0;
 
 Ticket.checkall = function(msg) {
-	console.dir(Ticket.tickets);
 	const ticks = Object.keys(Ticket.tickets);
 	for(let i=0; i<ticks.length;i++)
 		if(Ticket.tickets[ticks[i]].validate(msg)) {
-			console.log('resolving ticket ' + i);
 			Ticket.tickets[ticks[i]].call(msg);
 			delete Ticket.tickets[ticks[i]];
 			break;
