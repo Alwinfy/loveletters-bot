@@ -54,7 +54,7 @@ module.exports = function(io) {
 	}
 	
 	LoveLetters.prototype.start = function() {
-		if(Object.keys(this.lobby).length < 1) {
+		if(Object.keys(this.lobby).length < 2) {
 			this.announce('LoveLetters needs at least two players!');
 			return;
 		}
