@@ -37,7 +37,7 @@ module.exports = function(whisperer) {
 	};
 	Player.prototype.discard = function() {
 		this.game.announce(`${this} discards their card, revealing a ${this.hand[0]}!`);
-		if(this.hand[0] === 8)
+		if(this.hand[0].val === 8)
 			this.die('eight');
 		this.hand = [];
 		this.draw();
