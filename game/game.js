@@ -95,8 +95,8 @@ module.exports = function(io) {
 			winners = this.players.filter(function(p) {
 				return p.hand[0].val >= bigcard;
 			});
+			console.log(bigcard, winners);
 		}
-		console.log(bigcard, winners);
 		this.announce(`${announce}The winner${winners.length === 1 ? ' is' : 's are'} ${winners.join(' and ')}.`);
 		this.players = [];
 		this.deck = [];
