@@ -1,7 +1,7 @@
 {
-  "name": "buzzbot",
-  "version": "1.0.0",
-  "description": "A BuzzCount bot",
+  "name": "loveletters-bot",
+  "version": "0.8.4",
+  "description": "A Love Letters bot",
   "main": "index.js",
   "dependencies": {
     "bufferutil": "^3.0.4",
@@ -14,12 +14,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Alwinfy/buzzbot.git"
+    "url": "git+https://github.com/Alwinfy/loveletters-bot.git"
   },
   "author": "Alwinfy",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/Alwinfy/buzzbot/issues"
+    "url": "https://github.com/Alwinfy/loveletters-bot/issues"
   },
-  "homepage": "https://github.com/Alwinfy/buzzbot#readme"
+  "homepage": "https://github.com/Alwinfy/loveletters-bot#readme"
 }
