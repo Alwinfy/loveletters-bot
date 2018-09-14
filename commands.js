@@ -4,6 +4,7 @@ module.exports = function(client) {
 	const Ticket = require('./ticket');
 	const gameui = require('./interface')(client, Ticket);
 	const LoveLetters = require('./game/game')(gameui);
+	const cardtypes = require('./game/cardtypes');
 	const {readFileSync} = require('fs');
 	const splitter = new (require('grapheme-splitter'))();
 	const commands = {};
