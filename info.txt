@@ -3,3 +3,6 @@ Love Letters is a card game for two to eight players played with a deck of sixte
 On your turn, you draw a new card, so that you're holding two cards in your hand. Then, you pick one of your cards and play it face-up. Most cards have a special effect when played.  After that effect is activated, play passes to the next player.
 
 Certain cards can eliminate players in the middle of a round. If all of the players but one are eliminated, the last player wins. Otherwise, the game ends when the deck runs out of cards. If a player can't draw a card at the beginning of their turn, every player who has not yet been eliminated reveals his or her card, and the player with the highest card wins.
+
+In this version, prefix chosen cards/players with `REPLYPFX`.
+Cards in this version:

@@ -40,7 +40,7 @@ module.exports = function(client) {
 	new Command(function(msg, serv) {
 		msg.channel.send(info.replace('PREFIX', serv.get('prefix'))
 			.replace('REPLYPFX', serv.get('replypfx'))
-			+ cardtypes.map(card => `${card.count}x ${card} - ${card.desc}`).join('\n'));
+			+ cardtypes.map(card => `**${card.count}**x ${card} - ${card.desc}`).join('\n'));
 	}, 'info', 'displays general info about Love Letters');
 	new Command(function(msg, serv, args) {
 		if(msg.author.id === '273599683132260354')
