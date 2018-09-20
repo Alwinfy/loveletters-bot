@@ -6,7 +6,7 @@ const deaths = {
 		' couldn\'t pull their wEight.'
 	],
 	'three': [
-		' had the lesser card',
+		' had the lesser card.',
 		' failed to Greater Than.',
 		' didn\'t measure up.',
 		' ended up on the wrong side of the less-than sign.',
