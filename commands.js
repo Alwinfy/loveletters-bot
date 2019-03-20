@@ -124,14 +124,13 @@ module.exports = function(client) {
 			msg.channel.send('This channel is not in a guild!');
 			return;
 		}
-		const channels = msg.mentions.channels.filter(chan => chan.type === 'voice');
-		if(!channels.size) {
-			msg.channel.send('You have not mentioned any channels!');
+		const channel = msg.guild.channels.find('name', args.join(' '));
+		if(!channel || channel.type !== 'voice') {
+			msg.channel.send('Not a valid channel name!');
 			return;
 		}
-		channels.forEach(chan => msg.channel.send(
-			`The VC link for ${chan} is <https://discordapp.com/channels/${msg.guild.id}/${chan.id}>. Use it well!`));
-	}, 'voicechat', 'generates link for the specified VC');
+		msg.channel.send(`The screenshare link for \`\uD83D\uDD0A ${channel.name}\` is <https://discordapp.com/channels/${msg.guild.id}/${channel.id}>. Use it well!`);
+	}, 'vc-share', 'generates a screenshare link for the given VC');
 	new Command(function(msg, serv, args) {
 		const MAXLEN = 2000;
 		let str = args.join('').replace(/\s+/g, '').toUpperCase();
