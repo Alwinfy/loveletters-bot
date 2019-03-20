@@ -120,6 +120,19 @@ module.exports = function(client) {
 		msg.channel.send(embed);
 	}, 'valentine', 'replies with a random valentine (i.e. Love Letter)');
 	new Command(function(msg, serv, args) {
+		if(!msg.guild) {
+			msg.channel.send('This channel is not in a guild!');
+			return;
+		}
+		const channels = msg.mentions.channels.filter(chan => chan.type === 'voice');
+		if(!channels.size) {
+			msg.channel.send('You have not mentioned any channels!');
+			return;
+		}
+		channels.forEach(chan => msg.channel.send(
+			`The VC link for ${chan} is <https://discordapp.com/channels/${msg.guild.id}/${chan.id}>. Use it well!`));
+	}, 'voicechat', 'generates link for the specified VC');
+	new Command(function(msg, serv, args) {
 		const MAXLEN = 2000;
 		let str = args.join('').replace(/\s+/g, '').toUpperCase();
 		if(str[0] !== str[str.length - 1])
