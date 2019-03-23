@@ -24,14 +24,18 @@ let servers = {}, dms = {};
 console.log(Server);
 client.on('ready', function() {
 	console.log(`Logged in as ${client.user.tag}!`);
-	for(let guild of client.guilds.array()) {
+	client.guilds.map(guild => {
+		if(guild.available)
+				servers[guild.id] = new Server(guild);
+	});
+});
+client.on('guildCreate', function(guild) {
 	if(guild.available)
-			servers[guild.id] = new Server(guild);
-	}
+		servers[guild.id] = new Server(guild);
 });
 client.on('guildMemberAdd', function(newbie) {
 	let serv = servers[newbie.guild.id];
-	if(serv)
+	if(serv && serv.get('welcome').length)
 		util.getDefaultChannel(newbie.guild)
 			.send(`${newbie} ${serv.get('welcome')}`);
 });
