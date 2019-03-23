@@ -1,3 +1,4 @@
+const devs = exports.devs = ['273599683132260354'];
 exports.argparse = function(str) {
 	let spl = [''], esc = false, quot = true;
 	for (let c of str) {
@@ -25,9 +26,9 @@ exports.argparse = function(str) {
 		}
 	}
 	return spl;
-}
+};
 
-exports.getDefaultChannel = function(guild) {
+exports.getDefaultChannel = function getDefaultChannel(guild) {
 	if(guild.channels.has(guild.id))
 		return guild.channels.get(guild.id);
 
@@ -40,4 +41,8 @@ exports.getDefaultChannel = function(guild) {
 	 .sort((a, b) => a.position - b.position ||
 		 Long.fromString(a.id).sub(Long.fromString(b.id)).toNumber())
 	 .first();
-}
+};
+
+exports.maySetOpts = function(msg) {
+	return devs.indexOf(msg.author.id) != -1 || !msg.member || msg.member.permissions.has('MANAGE_MESSAGES');
+};
