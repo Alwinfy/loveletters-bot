@@ -139,7 +139,8 @@ new Command(function(msg, serv, args) {
 		msg.channel.send('This channel is not in a guild!');
 		return;
 	}
-	const channel = msg.guild.channels.find('name', args.join(' '));
+	const channel = msg.guild.channels.find(chan =>
+		chan.type === 'voice' && chan.name.startsWith(args.join(' ')));
 	if(!channel || channel.type !== 'voice') {
 		msg.channel.send('Not a valid channel name!');
 		return;
